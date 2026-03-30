@@ -138,11 +138,11 @@ variable "vsphere_vcenter" {
   description = "vSphere vCenter name"
 }
 
-variable "cluster_cni" {
-  type        = string
-  description = "CNI plugin to use for the cluster"
-  default     = "calico"
-}
+# variable "cluster_cni" {
+#   type        = string
+#   description = "CNI plugin to use for the cluster"
+#   default     = "calico"
+# }
 
 variable "disabled_features" {
   type        = list(string)
