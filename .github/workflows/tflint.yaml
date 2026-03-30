@@ -27,6 +27,8 @@ jobs:
         files: |
           **/*.tf
           **/*.tfvars
+        dir_names: true
+        dir_names_exclude_current_dir: false
   
     - uses: terraform-linters/setup-tflint@v6.2.2
       name: Setup TFLint
@@ -44,4 +46,7 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
 
     - name: Run TFLint
-      run: tflint --chdir=-f compact
+      run: |
+        for dir in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          tflint --chdir="$dir"
+        done
