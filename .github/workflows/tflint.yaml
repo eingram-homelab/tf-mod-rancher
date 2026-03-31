@@ -8,4 +8,3 @@ on:
 
 jobs:
   tflint:
-    

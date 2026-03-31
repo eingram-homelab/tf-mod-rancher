@@ -1,0 +1,46 @@
+#cloud-config
+users:
+- default
+- name: root
+  lock_passwd: false
+  hashed_passwd: ${salt_password}
+- name: ansible
+  gecos: Ansible service account
+  groups:
+  - sudo
+  - wheel
+  shell: /bin/bash
+  sudo:
+  - ALL=(ALL) NOPASSWD:ALL
+  passwd: ${salt_password}
+  lock_passwd: false
+  primary_group: ansible
+  ssh_authorized_keys:
+  - ${ssh_key}
+- name: eingram
+  gecos: Edward Ingram
+  groups:
+  - sudo
+  - wheel
+  shell: /bin/bash
+  sudo:
+  - ALL=(ALL) NOPASSWD:ALL
+  passwd: ${salt_password}
+  lock_passwd: false
+  primary_group: eingram
+  ssh_authorized_keys:
+  - ${ssh_key}
+runcmd:
+- swapoff -a
+- parted /dev/sda resizepart 3 100%
+- pvresize /dev/sda3
+- lvextend -r -l +100%FREE /dev/mapper/rl-root
+- mkdir -p /etc/rancher/k3s/config.yaml.d
+- chown root:root /etc/rancher/k3s/config.yaml.d
+- chmod 755 /etc/rancher/k3s/config.yaml.d
+- echo "kubelet-arg+:" > /etc/rancher/k3s/config.yaml.d/vsphere-node.yaml
+- echo "  - provider-id=vsphere://$(hostname)" >> /etc/rancher/k3s/config.yaml.d/vsphere-node.yaml
+- chown root:root /etc/rancher/k3s/config.yaml.d/vsphere-node.yaml
+- chmod 600 /etc/rancher/k3s/config.yaml.d/vsphere-node.yaml
+- yum install -y container-selinux selinux-policy-base
+- yum install -y https://rpm.rancher.io/k3s/latest/common/centos/9/noarch/k3s-selinux-1.6-1.el9.noarch.rpm
