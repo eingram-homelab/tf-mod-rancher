@@ -1,0 +1,14 @@
+---
+name: Push Workflow
+
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - '**.pkr.hcl'
+
+jobs:
+  tf-lint:
+    name: Terraform Lint
+    uses: eingram-homelab/reusable_workflows/.github/workflows/_terraform-lint.yaml@main
